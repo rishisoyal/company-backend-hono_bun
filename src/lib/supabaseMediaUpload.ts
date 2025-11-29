@@ -1,12 +1,12 @@
 import { supabase } from "./supabase";
 
 export default async function supabaseMediaUpload(
-  file: any
+  file: File
 ): Promise<string | null> {
   const { data, error } = await supabase.storage
     .from("media")
-    .upload(`media/${file.name}`, file.data, {
-      contentType: file.mimetype,
+    .upload(`media/${file.name}`, await file.arrayBuffer(), {
+      contentType: file.type,
       upsert: true,
     });
 
