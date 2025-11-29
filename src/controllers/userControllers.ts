@@ -1,4 +1,4 @@
-import bcrypt from "bcrypt";
+import bcrypt = require('bcryptjs');
 import { SignJWT } from "jose";
 import { Context } from "hono";
 import User from "../models/UserModel";
@@ -31,7 +31,7 @@ export async function userLogIn(c: Context) {
   setCookie(c, "auth_token", token, {
     httpOnly: true,
     secure: isProd,
-    sameSite: "none",
+    sameSite: isProd? "none": "lax",
     path: "/",
     maxAge: 2 * 24 * 60 * 60,
   });

@@ -22,7 +22,9 @@ if (!MONGODB_URI) {
 mongoose
   .connect(MONGODB_URI, { dbName: "company_website" })
   .then(() =>
-    console.log("-------------\nConnected to MongoDB\n-------------\n")
+    console.log(
+      "\n---------------------\nConnected to MongoDB\n---------------------\n"
+    )
   )
   .catch((err) => console.error(err));
 
