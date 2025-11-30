@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 import { config } from "dotenv";
 import userRouter from "./routes/userRoutes";
 import contentRouter from "./routes/contentRoutes";
+import analyticsRouter from "./routes/analyticsRoute";
 
 config();
 
@@ -21,11 +22,11 @@ if (!MONGODB_URI) {
 // ------------------------------
 mongoose
   .connect(MONGODB_URI, { dbName: "company_website" })
-  .then(() =>
-    console.log(
-      "\n---------------------\nConnected to MongoDB\n---------------------\n"
-    )
-  )
+  .then(() => {
+    console.log("---------------------");
+    console.log("Connected to MongoDB");
+    console.log("---------------------");
+  })
   .catch((err) => console.error(err));
 
 // ------------------------------
@@ -51,11 +52,13 @@ app.use(
 // Routes
 app.route("/api/user", userRouter);
 app.route("/api/content", contentRouter);
+app.route("/api/analytics", analyticsRouter);
 
 // Bun server
 serve({
   port: PORT,
   fetch: app.fetch,
 });
-
+console.log("---------------------------------------");
 console.log(`API running at http://localhost:${PORT}`);
+console.log("---------------------------------------");
