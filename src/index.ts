@@ -60,5 +60,5 @@ serve({
   fetch: app.fetch,
 });
 console.log("---------------------------------------");
-console.log(`API running at http://localhost:${PORT}`);
+console.log(`Server running at http://localhost:${PORT}`);
 console.log("---------------------------------------");
