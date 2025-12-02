@@ -19,10 +19,12 @@ export async function getRealTimeAnalytics(c: Context) {
       }
     );
     const realTimeData = res.data;
+    console.error(res);
 
     return c.json({ realTimeData });
   } catch (error: any) {
-    return c.json({ error }, 500);
+    console.error(error);
+    return c.json({ error: error.message }, 500);
   }
 }
 

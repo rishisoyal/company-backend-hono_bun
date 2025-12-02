@@ -1,9 +1,12 @@
-import bcrypt = require('bcryptjs');
 import { SignJWT } from "jose";
 import { Context } from "hono";
 import User from "../models/UserModel";
 import { setCookie, deleteCookie, getCookie } from "hono/cookie";
 
+// cache the secret
+const SECRET = new TextEncoder().encode(process.env.TOKEN_SECRET);
+
+// post
 export async function userLogIn(c: Context) {
   const body = await c.req.json();
   const { name, password } = body;
@@ -15,23 +18,23 @@ export async function userLogIn(c: Context) {
   const user = await User.findOne({ name });
   if (!user) return c.json({ error: "User not found" }, 401);
 
-  const valid = await bcrypt.compare(password, user.password_hash);
+  const valid = await Bun.password.verify(password, user.password_hash);
   if (!valid) return c.json({ error: "Invalid credentials" }, 401);
 
   const token = await new SignJWT({
-    uid: user._id.toString(),
+    uid: user._id!.toString(),
     role: user.role,
   })
     .setProtectedHeader({ alg: "HS256" })
     .setExpirationTime("2d")
-    .sign(new TextEncoder().encode(process.env.TOKEN_SECRET));
+    .sign(SECRET);
 
   const isProd = process.env.BUN_ENV === "production";
 
   setCookie(c, "auth_token", token, {
     httpOnly: true,
     secure: isProd,
-    sameSite: isProd? "none": "lax",
+    sameSite: isProd ? "none" : "lax",
     path: "/",
     maxAge: 2 * 24 * 60 * 60,
   });
@@ -39,6 +42,7 @@ export async function userLogIn(c: Context) {
   return c.json({ message: "success" }, 200);
 }
 
+// delete
 export async function userLogOut(c: Context) {
   const token = getCookie(c, "auth_token");
 
